@@ -1,0 +1,23 @@
+name: Docker Hub Latest Tags
+description: Retrieves the latest image tags to help build images using all of a base image's platforms
+
+inputs:
+  image:
+    description: Image name to find (author/image)
+    required: true
+  number_of_tags:
+    description: The number of latest tags to retrieve
+    required: true
+    default: 2
+  max_pages:
+    description: Maximum number of pages to retrieve
+    required: true
+    default: 0
+
+outputs:
+  tags:
+    description: Tags with supported platforms
+
+runs:
+  using: 'node12'
+  main: 'src/index.js'
