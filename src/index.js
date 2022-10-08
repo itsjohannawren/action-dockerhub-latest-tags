@@ -223,7 +223,7 @@ async function main () {
 
 		output = "";
 		for (version of tags) {
-			output += " ".join (version.tags) + " " + ",".join (version.platforms) + "\n";
+			output += version.tags.join (" ") + " " + version.platforms.join (",") + "\n";
 		}
 
 		core.setOutput ('tags', output);
