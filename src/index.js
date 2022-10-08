@@ -1,6 +1,6 @@
 const core = require ("@actions/core");
-//const fetch = require ("node-fetch").fetch;
-import fetch from "node-fetch";
+const fetch = require ("node-fetch");
+
 
 const DEFAULT_MAX_PAGES = 0;
 const DEFAULT_NUMBER_OF_TAGS = 2;
