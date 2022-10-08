@@ -1,22 +1,32 @@
 {
-  "name": "action-dockerhub-latest-tags",
-  "version": "0.1.0",
-  "description": "",
-  "main": "src/index.js",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/itsjohannawren/action-dockerhub-latest-tags.git"
-  },
-  "keywords": [],
-  "author": "https://github.com/itsjohannawren",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/itsjohannawren/action-dockerhub-latest-tags/issues"
-  },
-  "homepage": "https://github.com/itsjohannawren/action-dockerhub-latest-tags#readme",
-  "dependencies": {
-    "@actions/core": "*",
-    "@actions/github": "*",
-    "got": "*"
-  }
+	"name": "action-dockerhub-latest-tags",
+	"version": "0.1.0",
+	"description": "Retrieves the latest image tags to help build images using all of a base image's platforms",
+	"main": "src/index.js",
+	"keywords": [
+		"github",
+		"action",
+		"actions",
+		"docker",
+		"hub",
+		"dockerhub",
+		"tags",
+		"image",
+		"platform",
+		"platforms"
+	],
+	"author": "https://github.com/itsjohannawren",
+	"license": "MIT",
+	"homepage": "https://github.com/itsjohannawren/action-dockerhub-latest-tags",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/itsjohannawren/action-dockerhub-latest-tags.git"
+	},
+	"bugs": {
+		"url": "https://github.com/itsjohannawren/action-dockerhub-latest-tags/issues"
+	},
+	"dependencies": {
+		"@actions/core": "^1.10.0",
+		"@actions/github": "^5.1.1"
+	}
 }

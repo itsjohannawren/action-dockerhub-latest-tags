@@ -1,5 +1,4 @@
-const core = require('@actions/core');
-const got = require('got');
+const core = require ("@actions/core");
 
 const DEFAULT_MAX_PAGES = 0;
 const DEFAULT_NUMBER_OF_TAGS = 2;
@@ -7,14 +6,19 @@ const DEFAULT_NUMBER_OF_TAGS = 2;
 function get_input_variable (name, default_value) {
 	let value = core.getInput (name) || null;
 
-	if (value === null) {
+	if (
+		(value === null) &&
+		(default_value !== undefined)
+	) {
+		value = default_value;
+	} else if (
+		(value === null) &&
+		(default_value === undefined)
+	) {
 		throw new Error ("Input variable '" + name + "' not specified!");
 	}
 
-	value = value.trim ();
-	if  (! value) {
-		value = default_value;
-	}
+	value = value.toString ().trim ();
 
 	if (value.match (/^\d+/)) {
 		value = parseInt (value, 10)
@@ -54,16 +58,18 @@ async function request (author, image, page) {
 	const url = "https://registry.hub.docker.com/v2/repositories/" + author + "/" + image + "/tags?page=" + page;
 
 	console.log ("Requesting: " + url);
-	const response = await got (url);
+	const response = await fetch (url);
+	const response_text = await response.text ();
 
-	console.log ("Response status: " + response.statusCode);
-	console.log ("Response body:\n" + response.body);
 
-	if (response.statusCode !== 200) {
-		throw new Error("Non-success status code received: " + response.statusCode);
+	console.log ("   Response status: " + response.status);
+	console.log ("   Response length: " + response_text.length);
+
+	if (response.status !== 200) {
+		throw new Error("Non-success status code received: " + response.status);
 	}
 
-	return (response.body);
+	return (response_text);
 }
 
 function has_next (data) {
@@ -107,8 +113,8 @@ async function fetch_images (organization, image, max_pages) {
 			(page <= max_pages)
 		)
 	) {
-		const response_body = await request (organization, image);
-		const _images = extra_images (response_body);
+		const response_body = await request (organization, image, page);
+		const _images = extract_images (response_body);
 		images = images.concat (_images)
 		if (! has_next (response_body)) {
 			break;
@@ -140,12 +146,18 @@ function digest_images (images, number_of_tags) {
 				(b_parts [i] === undefined)
 			) {
 				return (1);
-			} else if (a_parts [i] > b_parts [i]) {
+			} else if (parseInt (a_parts [i], 10) > parseInt (b_parts [i], 10)) {
 				return (1);
-			} else if (a_parts [i] < b_parts [i]) {
+			} else if (parseInt (a_parts [i], 10) < parseInt (b_parts [i], 10)) {
 				return (-1);
 			}
 		}
+	};
+	const semantic_sort_tag = (a, b) => {
+		return (semantic_sort (
+			a.tag,
+			b.tag
+		));
 	};
 
 	let groups = {};
@@ -160,11 +172,11 @@ function digest_images (images, number_of_tags) {
 	group_keys.sort (semantic_sort);
 	group_keys.reverse ();
 
-	groups_keys = group_keys.slice (0, number_of_tags);
+	group_keys = group_keys.slice (0, number_of_tags);
 
 	let tags = [];
 	for (group_key of group_keys) {
-		groups [group_key].sort (semantic_sort);
+		groups [group_key].sort (semantic_sort_tag);
 		groups [group_key].reverse ();
 		const group_version = groups [group_key][0].tag;
 
@@ -191,17 +203,17 @@ async function main () {
 	try {
 		const input_image = get_input_variable ('image', null);
 		const [image_organization, image_name] = parse_image (input_image);
+
 		const input_max_pages = get_input_variable ('max_pages', DEFAULT_MAX_PAGES);
-		if (isNaN (input_max_pages)) {
-			const max_pages = DEFAULT_MAX_PAGES;
-		} else {
-			const max_pages = input_max_pages;
+		let max_pages = DEFAULT_MAX_PAGES;
+		if (! isNaN (input_max_pages)) {
+			max_pages = input_max_pages;
 		}
+
 		const input_number_of_tags = get_input_variable ('number_of_tags', DEFAULT_NUMBER_OF_TAGS);
-		if (isNaN (input_number_of_tags)) {
-			const number_of_tags = DEFAULT_NUMBER_OF_TAGS;
-		} else {
-			const number_of_tags = input_number_of_tags;
+		let number_of_tags = DEFAULT_NUMBER_OF_TAGS;
+		if (! isNaN (input_number_of_tags)) {
+			number_of_tags = input_number_of_tags;
 		}
 
 		const images = await fetch_images (image_organization, image_name, max_pages);

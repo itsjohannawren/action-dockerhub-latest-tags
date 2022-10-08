@@ -19,5 +19,5 @@ outputs:
     description: Tags with supported platforms
 
 runs:
-  using: 'node12'
+  using: 'node18'
   main: 'src/index.js'
