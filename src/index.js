@@ -221,7 +221,7 @@ async function main () {
 		const images = await fetch_images (image_organization, image_name, max_pages);
 		const tags = digest_images (images, number_of_tags)
 
-		core.setOutput ('tags', tags);
+		core.setOutput ('tags', JSON.stringify (tags));
 	} catch (err) {
 		core.setFailed (err.message);
 	}
