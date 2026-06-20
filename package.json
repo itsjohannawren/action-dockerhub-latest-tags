@@ -26,7 +26,7 @@
 		"url": "https://github.com/itsjohannawren/action-dockerhub-latest-tags/issues"
 	},
 	"dependencies": {
-		"@actions/core": "^1.10.0",
+		"@actions/core": "^1.11.1",
 		"@actions/github": "^6.0.0",
 		"node-fetch": "*"
 	}
